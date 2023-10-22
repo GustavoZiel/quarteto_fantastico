@@ -8,7 +8,6 @@ import time
 
 from streamlit.components.v1 import html
 
-
 # Navigate to another page
 # Called like an Event
 def nav_page(page_name, timeout_secs=3):
@@ -36,6 +35,7 @@ def nav_page(page_name, timeout_secs=3):
     """ % (page_name, timeout_secs)
     html(nav_script)
 
+st.title("Welcome to COnvoker")
 
 nameToImg = {'Michael Jackson' : 'https://pm1.aminoapps.com/6726/a81ade5179d30ca4362763a833066aec113fd436v2_hq.jpg',
              'The Rock' : 'https://i.pinimg.com/736x/93/09/d4/9309d424be1cb7a5a301f9c15a75ffd3.jpg',
@@ -65,7 +65,8 @@ with st.sidebar:
 
 with col2:
     if st.button(label="Fight!"):
-        nav_page("Chat")
+        if st.session_state['character'] != 'Default':
+            nav_page("Chat")
 
 # html_string = """
 #             <audio controls autoplay hidden="hidden">

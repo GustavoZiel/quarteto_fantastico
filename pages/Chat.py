@@ -24,9 +24,9 @@ with st.sidebar:
     #     'bot.png')
     
     # img = Image.open('bot.png')
-    st.image(nameToImg[st.session_state['character']])
+    st.image(nameToImg[st.session_state['character']], caption=st.session_state['character'])
 
-st.title("Simple chat")
+st.title("Rap battle against " + st.session_state['character'])
 
 # Initialize chat history
 if "messages" not in st.session_state:
