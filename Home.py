@@ -42,7 +42,7 @@ nameToImg = {'Michael Jackson' : 'https://pm1.aminoapps.com/6726/a81ade5179d30ca
              'Oprah' : 'https://deadline.com/wp-content/uploads/2020/04/oprah-winfrey.jpg',
              'Default' : 'https://abs.twimg.com/sticky/default_profile_images/default_profile_400x400.png'}
 
-if 'character' not in st.session_state:
+if "character" not in st.session_state:
     st.session_state['character'] = 'Default'
 
 placeholder = st.empty()

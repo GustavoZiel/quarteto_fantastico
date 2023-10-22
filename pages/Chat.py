@@ -4,18 +4,50 @@ from PIL import Image
 import time
 import urllib.request
 
-from Home import nameToImg,nav_page
+import cohere
+import numpy as np
 
-def generate_response(prompt=""):
-    message = random.choice(
-        [
-            "Hello there! How can I assist you today?",
-            "Hi, human! Is there anything I can help you with?",
-            "Do you need help?",
-        ]
+from Home import nav_page,nameToImg
+
+if "character" not in st.session_state:
+    st.session_state['character'] = 'Default'
+
+if "co" not in st.session_state:
+    st.session_state['co'] = cohere.Client("5vyIhC5JXqAVKPO4OOsiXWvTSGLNCm5ZsmE5OWko")
+
+def generate_text(prompt, chat_history, temp=1):
+    response = st.session_state['co'].chat(
+        prompt,
+        model='command',
+        temperature=temp,
+        chat_history=chat_history,
     )
 
-    return message
+    # response = st.session_state['co'].generate(  
+    #     model='command-nightly',  
+    #     prompt = prompt,  
+    #     max_tokens=100, # This parameter is optional. 
+    #     temperature=0.750,
+    #     chat_history=chat_history
+    # )
+
+    answer = response.text
+    # return response.generations[0].text
+
+    # add message and answer to the chat history
+    user_message = {"user_name": "User", "text": prompt}
+    bot_message = {"user_name": "Chatbot", "text": answer}
+    chat_history.append(user_message)
+    chat_history.append(bot_message)
+
+    return answer
+
+message_start = f"I will prompt you with a rap battle stanza, you have to respond according to it acting like {st.session_state['character']}, and referencing moments of its life, you should replay ALWAYS in the format of 4 line stanza, understand?"
+
+# Initialize chat history
+if 'chat_history_1' not in st.session_state:
+    st.session_state['chat_history_1'] = []
+    generate_text(message_start,st.session_state['chat_history_1'])
 
 with st.sidebar:
     
@@ -28,6 +60,8 @@ with st.sidebar:
 
 st.title("Rap battle against " + st.session_state['character'])
 
+
+
 # Initialize chat history
 if "messages" not in st.session_state:
     st.session_state.messages = []
@@ -35,27 +69,32 @@ if "messages" not in st.session_state:
 # Display chat messages from history on app rerun
 for message in st.session_state.messages:
     with st.chat_message(message["role"],avatar=message["avatar"]):
-        st.markdown(message["content"])
+        st.text(message["content"])
 
 # Accept user input
 if prompt := st.chat_input("What is up?"):
+    # print(prompt)
     # Add user message to chat history
     st.session_state.messages.append({"role": "user", "content": prompt, "avatar":"human"})
     # Display user message in chat message container
     with st.chat_message("user"):
-        st.markdown(prompt)
+        st.text(prompt)
 
     # Display assistant response in chat message container
     with st.chat_message("COnvoker", avatar=nameToImg[st.session_state['character']]):
         message_placeholder = st.empty()
         full_response = ""
-        assistant_response = generate_response()
+        assistant_response = generate_text(prompt, st.session_state['chat_history_1'])
+        
         # Simulate stream of response with milliseconds delay
-        for chunk in assistant_response.split():
-            full_response += chunk + " "
-            time.sleep(0.05)
+        for char in assistant_response:
+            full_response += char
+            time.sleep(0.01)
+                
             # Add a blinking cursor to simulate typing
-            message_placeholder.markdown(full_response + "▌")
-        message_placeholder.markdown(full_response)
+            message_placeholder.text(full_response + "▌")
+        message_placeholder.text(full_response)
+
+        message_placeholder.text(assistant_response)
     # Add assistant response to chat history
-    st.session_state.messages.append({"role": "assistant", "content": full_response, "avatar":nameToImg[st.session_state['character']]})
+    st.session_state.messages.append({"role": "assistant", "content": assistant_response, "avatar":nameToImg[st.session_state['character']]})

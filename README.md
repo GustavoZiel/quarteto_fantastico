@@ -1,2 +1,4 @@
-# quarteto_fantastico
-Onovo Lab - Hackathon
+# Grupo - Quarteto Fantástico
+## HACKATHON 26 - Onovo Lab
+
+
