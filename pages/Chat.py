@@ -13,7 +13,7 @@ if "character" not in st.session_state:
     st.session_state['character'] = 'Default'
 
 if "co" not in st.session_state:
-    st.session_state['co'] = cohere.Client("5vyIhC5JXqAVKPO4OOsiXWvTSGLNCm5ZsmE5OWko")
+    st.session_state['co'] = cohere.Client("cKdIk0HQBozrDy02qQ3VOuglzeK4HzJzdBDHeBZh")
 
 def generate_text(prompt, chat_history, temp=1):
     response = st.session_state['co'].chat(
